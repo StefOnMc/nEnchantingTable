@@ -1,0 +1,16 @@
+enchant-menu:
+  title: "Table d'enchantement"
+  headerText: "Sélectionnez l'enchantement à mettre"
+  itemHasNoEnchant: "§cL'item en main ne peut pas être enchanté"
+  #{prix_type} => xp / $
+  enchantmentButton: "{enchant}\n§fPrix : §6{prix} {prix_type} §f/ level"
+  quitButton: "§cQuitter"
+
+enchanting-menu:
+  title: "{enchant}"
+  headerText: "§6- §fEntrez le niveau de l'enchantement"
+
+messages:
+  itemEnchanted: "§aVous avez bien enchanté votre item"
+  noMoney: "§cVous n'avez pas assez d'argent"
+  noXp: "§cVous n'avez pas assez d'xp"
