@@ -100,48 +100,49 @@ class Main extends PluginBase implements Listener {
                 if ($this->getAllEnchantmentsForItem($item) !== []){
                     $form->setHeaderText($this->getConfig()->getNested("enchant-menu.headerText"));
                     foreach ($this->getAllEnchantmentsForItem($item) as $enchantData){
-                       $enchantment = $enchantData["enchant"];
-                       $prix = $enchantData["prix_par_level"];
-                       $max = $enchantData["max_level"];
-                       $type = $enchantData["prix_type"];
-                       assert($enchantment instanceof Enchantment);
-                       $form->addButton(new Button(str_replace(["{enchant}", "{prix}", "{prix_type}"], [$this->getEnchantmentName($enchantment, false), strval($prix), $type === "money" ? "$" : "xp"], $this->getConfig()->getNested("enchant-menu.enchantmentButton")), null, function (Player $player) use ($type, $i, $enchantment, $item, $prix, $max) {
-                           $processForm = new CustomForm(str_replace("{enchant}", $this->getEnchantmentName($enchantment, false), $this->getConfig()->getNested("enchanting-menu.title")));
-                           $processForm->addElement('slider', new Slider($this->getConfig()->getNested("enchanting-menu.headerText"), 1.0, floatval($max), 1.00, 1.0));
-                           $processForm->setSubmitListener(function (Player $player, FormResponse $response) use ($type, $i, $enchantment, $item, $prix,$max) {
-                               $slider = $response->getSliderSubmittedStep("slider");
-                               $slider = intval($slider);
-                               if(!$slider < 1 or !$slider > $max){
-                                   if($type === "money"){
-                                       if(EconomyAPI::getInstance()->myMoney($player) >= $slider * $prix){
-                                           EconomyAPI::getInstance()->reduceMoney($player, $slider * $prix);
-                                           $this->process($enchantment, $slider, $player, $i, $item);
-                                       } else $player->sendMessage($this->getConfig()->getNested("messages.noMoney"));
-                                   } else {
-                                       if($player->getXpManager()->getXpLevel() > $slider * $prix){
-                                           $player->getXpManager()->setXpLevel($player->getXpManager()->getXpLevel() - ($slider * $prix));
-                                           $this->process($enchantment, $slider, $player, $i, $item);
-                                       } else $player->sendMessage($this->getConfig()->getNested("messages.noXp"));
-                               }
-                           });
-                           $player->sendForm($processForm);
+                        $enchantment = $enchantData["enchant"];
+                        $prix = $enchantData["prix_par_level"];
+                        $max = $enchantData["max_level"];
+                        $type = $enchantData["prix_type"];
+                        assert($enchantment instanceof Enchantment);
+                        $form->addButton(new Button(str_replace(["{enchant}", "{prix}", "{prix_type}"], [$this->getEnchantmentName($enchantment, false), strval($prix), $type === "money" ? "$" : "xp"], $this->getConfig()->getNested("enchant-menu.enchantmentButton")), null, function (Player $player) use ($type, $i, $enchantment, $item, $prix, $max) {
+                            $processForm = new CustomForm(str_replace("{enchant}", $this->getEnchantmentName($enchantment, false), $this->getConfig()->getNested("enchanting-menu.title")));
+                            $processForm->addElement('slider', new Slider($this->getConfig()->getNested("enchanting-menu.headerText"), 1.0, floatval($max), 1.00, 1.0));
+                            $processForm->setSubmitListener(function (Player $player, FormResponse $response) use ($type, $i, $enchantment, $item, $prix,$max) {
+                                $slider = $response->getSliderSubmittedStep("slider");
+                                $slider = intval($slider);
+                                if(!$slider < 1 or !$slider > $max) {
+                                    if ($type === "money") {
+                                        if (EconomyAPI::getInstance()->myMoney($player) >= $slider * $prix) {
+                                            EconomyAPI::getInstance()->reduceMoney($player, $slider * $prix);
+                                            $this->process($enchantment, $slider, $player, $i, $item);
+                                        } else $player->sendMessage($this->getConfig()->getNested("messages.noMoney"));
+                                    } else {
+                                        if ($player->getXpManager()->getXpLevel() > $slider * $prix) {
+                                            $player->getXpManager()->setXpLevel($player->getXpManager()->getXpLevel() - ($slider * $prix));
+                                            $this->process($enchantment, $slider, $player, $i, $item);
+                                        } else $player->sendMessage($this->getConfig()->getNested("messages.noXp"));
+                                    }
+                                }
+                                });
+                                $player->sendForm($processForm);
 
-                       }));
+                            }));
                     }
                 } else {
-                    $form->setHeaderText($this->getConfig()->getNested("enchant-menu.itemHasNoEnchant"));
-                }
-                $form->addButton(new Button($this->getConfig()->getNested("enchant-menu.quitButton")));
-                $player->sendForm($form);
+                        $form->setHeaderText($this->getConfig()->getNested("enchant-menu.itemHasNoEnchant"));
+                    }
+                    $form->addButton(new Button($this->getConfig()->getNested("enchant-menu.quitButton")));
+                    $player->sendForm($form);
 
+                }
             }
         }
-    }
 
-    private function process($enchantment, $slider, $player, $i, $item){
-        $item->addEnchantment(new EnchantmentInstance($enchantment, $slider));
-        $player->getInventory()->setItem($i, $item);
-        $player->sendMessage($this->getConfig()->getNested("messages.itemEnchanted"));
-    }
+        private function process($enchantment, $slider, $player, $i, $item){
+            $item->addEnchantment(new EnchantmentInstance($enchantment, $slider));
+            $player->getInventory()->setItem($i, $item);
+            $player->sendMessage($this->getConfig()->getNested("messages.itemEnchanted"));
+        }
 
-}
+    }
