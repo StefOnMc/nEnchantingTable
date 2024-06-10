@@ -111,7 +111,9 @@ class Main extends PluginBase implements Listener {
                             $processForm->setSubmitListener(function (Player $player, FormResponse $response) use ($type, $i, $enchantment, $item, $prix,$max) {
                                 $slider = $response->getSliderSubmittedStep("slider");
                                 $slider = intval($slider);
-                                if(!$slider < 1 or !$slider > $max) {
+                                if($slider < 1 or $slider > $max) {
+                                    // wtf wsh mm en mettant des "!" sa ne fix pas
+                                }else{
                                     if ($type === "money") {
                                         if (EconomyAPI::getInstance()->myMoney($player) >= $slider * $prix) {
                                             EconomyAPI::getInstance()->reduceMoney($player, $slider * $prix);
