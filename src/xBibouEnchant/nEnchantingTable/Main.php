@@ -111,9 +111,7 @@ class Main extends PluginBase implements Listener {
                            $processForm->setSubmitListener(function (Player $player, FormResponse $response) use ($type, $i, $enchantment, $item, $prix,$max) {
                                $slider = $response->getSliderSubmittedStep("slider");
                                $slider = intval($slider);
-                               if($slider < 1 or $slider > $max){
-                                   $player->sendMessage("ta voulu faire l'exploit sale batard.");
-                               }else{
+                               if(!$slider < 1 or !$slider > $max){
                                    if($type === "money"){
                                        if(EconomyAPI::getInstance()->myMoney($player) >= $slider * $prix){
                                            EconomyAPI::getInstance()->reduceMoney($player, $slider * $prix);
@@ -124,7 +122,6 @@ class Main extends PluginBase implements Listener {
                                            $player->getXpManager()->setXpLevel($player->getXpManager()->getXpLevel() - ($slider * $prix));
                                            $this->process($enchantment, $slider, $player, $i, $item);
                                        } else $player->sendMessage($this->getConfig()->getNested("messages.noXp"));
-                                   }
                                }
                            });
                            $player->sendForm($processForm);
