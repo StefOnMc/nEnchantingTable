@@ -108,19 +108,23 @@ class Main extends PluginBase implements Listener {
                        $form->addButton(new Button(str_replace(["{enchant}", "{prix}", "{prix_type}"], [$this->getEnchantmentName($enchantment, false), strval($prix), $type === "money" ? "$" : "xp"], $this->getConfig()->getNested("enchant-menu.enchantmentButton")), null, function (Player $player) use ($type, $i, $enchantment, $item, $prix, $max) {
                            $processForm = new CustomForm(str_replace("{enchant}", $this->getEnchantmentName($enchantment, false), $this->getConfig()->getNested("enchanting-menu.title")));
                            $processForm->addElement('slider', new Slider($this->getConfig()->getNested("enchanting-menu.headerText"), 1.0, floatval($max), 1.00, 1.0));
-                           $processForm->setSubmitListener(function (Player $player, FormResponse $response) use ($type, $i, $enchantment, $item, $prix) {
+                           $processForm->setSubmitListener(function (Player $player, FormResponse $response) use ($type, $i, $enchantment, $item, $prix,$max) {
                                $slider = $response->getSliderSubmittedStep("slider");
                                $slider = intval($slider);
-                               if($type === "money"){
-                                   if(EconomyAPI::getInstance()->myMoney($player) >= $slider * $prix){
-                                       EconomyAPI::getInstance()->reduceMoney($player, $slider * $prix);
-                                       $this->process($enchantment, $slider, $player, $i, $item);
-                                   } else $player->sendMessage($this->getConfig()->getNested("messages.noMoney"));
-                               } else {
-                                   if($player->getXpManager()->getXpLevel() > $slider * $prix){
-                                       $player->getXpManager()->setXpLevel($player->getXpManager()->getXpLevel() - ($slider * $prix));
-                                       $this->process($enchantment, $slider, $player, $i, $item);
-                                   } else $player->sendMessage($this->getConfig()->getNested("messages.noXp"));
+                               if($slider < 1 or $slider > $max){
+                                   $player->sendMessage("ta voulu faire l'exploit sale batard.");
+                               }else{
+                                   if($type === "money"){
+                                       if(EconomyAPI::getInstance()->myMoney($player) >= $slider * $prix){
+                                           EconomyAPI::getInstance()->reduceMoney($player, $slider * $prix);
+                                           $this->process($enchantment, $slider, $player, $i, $item);
+                                       } else $player->sendMessage($this->getConfig()->getNested("messages.noMoney"));
+                                   } else {
+                                       if($player->getXpManager()->getXpLevel() > $slider * $prix){
+                                           $player->getXpManager()->setXpLevel($player->getXpManager()->getXpLevel() - ($slider * $prix));
+                                           $this->process($enchantment, $slider, $player, $i, $item);
+                                       } else $player->sendMessage($this->getConfig()->getNested("messages.noXp"));
+                                   }
                                }
                            });
                            $player->sendForm($processForm);

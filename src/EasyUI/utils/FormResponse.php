@@ -64,12 +64,12 @@ class FormResponse {
     private function getElement(string $id, string $expectedClass): Element {
         $element = $this->elements[$id] ?? null;
         if(!$element instanceof Element) {
-            throw new InvalidArgumentException("$id is not a valid element identifier");
+           var_dump("$id is not a valid element identifier");
         } elseif(!is_a($element, $expectedClass)) {
             try {
-                throw new InvalidArgumentException("The element with $id is not a " . (new ReflectionClass($expectedClass))->getShortName());
+                var_dump("The element with $id is not a " . (new ReflectionClass($expectedClass))->getShortName());
             } catch(ReflectionException $exception) {
-                throw new InvalidArgumentException($expectedClass . " doesn't use a valid... namespace?");
+                var_dump($expectedClass . " doesn't use a valid... namespace?");
             }
         }
         return $element;

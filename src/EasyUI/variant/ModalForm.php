@@ -62,7 +62,7 @@ class ModalForm extends Form {
 
     public function handleResponse(Player $player, $data): void {
         if(!is_bool($data)) {
-            throw new FormValidationException("$data is not a valid response");
+            var_dump("$data is not a valid response");
         }
 
         if($data) {
